@@ -1,0 +1,6 @@
+{
+  "name": "World Cup Tracker 2026",
+  "description": "A modern, visually exciting tracker for World Cup 2026 matches with live simulation controls, goal celebration animations, and realistic football aesthetics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
