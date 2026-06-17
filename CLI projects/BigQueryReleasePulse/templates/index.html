@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Pulse - Track & Tweet Updates</title>
+    <meta name="description" content="Stay up to date with the latest features, announcements, and issues in Google BigQuery. Select, preview, and tweet release notes instantly.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-gradient bg-gradient-1"></div>
+    <div class="bg-gradient bg-gradient-2"></div>
+    <div class="bg-gradient bg-gradient-3"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-database-arrow-up"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>BigQuery <span>Release Pulse</span></h1>
+                    <p class="tagline">Monitor, analyze, and share the latest Google BigQuery releases</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn-icon-toggle" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="refresh-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-rotate-right" id="refresh-spinner"></i>
+                    <span>Refresh Feed</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Counter Overview -->
+        <section class="stats-overview" id="stats-container">
+            <div class="stat-card" data-type="All">
+                <div class="stat-icon all-icon"><i class="fa-solid fa-list"></i></div>
+                <div class="stat-info">
+                    <h3 id="stat-all-count">0</h3>
+                    <p>Total Updates</p>
+                </div>
+            </div>
+            <div class="stat-card" data-type="Feature">
+                <div class="stat-icon feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div class="stat-info">
+                    <h3 id="stat-feature-count">0</h3>
+                    <p>Features</p>
+                </div>
+            </div>
+            <div class="stat-card" data-type="Announcement">
+                <div class="stat-icon announcement-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                <div class="stat-info">
+                    <h3 id="stat-announcement-count">0</h3>
+                    <p>Announcements</p>
+                </div>
+            </div>
+            <div class="stat-card" data-type="Issue">
+                <div class="stat-icon issue-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="stat-info">
+                    <h3 id="stat-issue-count">0</h3>
+                    <p>Issues</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control Bar -->
+        <div class="control-bar">
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search releases by content or date...">
+                <button id="clear-search" class="clear-search-btn" style="display: none;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="filters-wrapper">
+                <button class="filter-btn active" data-filter="All">All</button>
+                <button class="filter-btn" data-filter="Feature">Features</button>
+                <button class="filter-btn" data-filter="Announcement">Announcements</button>
+                <button class="filter-btn" data-filter="Issue">Issues</button>
+                <button class="filter-btn" data-filter="Deprecation">Deprecations</button>
+            </div>
+        </div>
+
+        <!-- Main Feed -->
+        <main class="releases-feed" id="releases-feed">
+            <!-- Loading Skeleton State -->
+            <div class="loading-state" id="loading-state">
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton-badge"></div>
+                        <div class="skeleton-date"></div>
+                    </div>
+                    <div class="skeleton-body">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                    <div class="skeleton-footer"></div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton-badge"></div>
+                        <div class="skeleton-date"></div>
+                    </div>
+                    <div class="skeleton-body">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                    </div>
+                    <div class="skeleton-footer"></div>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-state" id="error-state" style="display: none;">
+                <div class="error-icon">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <h3>Failed to load release notes</h3>
+                <p id="error-message">We encountered an issue fetching the latest BigQuery release notes.</p>
+                <button class="btn btn-secondary" id="retry-btn">
+                    <i class="fa-solid fa-rotate-right"></i> Try Again
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3>No updates found</h3>
+                <p>Try refining your search terms or filter selection.</p>
+            </div>
+
+            <!-- Feed Content -->
+            <div class="feed-grid" id="feed-grid">
+                <!-- Dynamically populated from JS -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Data parsed from <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" rel="noopener noreferrer">BigQuery Release Notes Atom Feed</a>. Updated dynamically.</p>
+            <p class="copyright">&copy; 2026 BigQuery Release Pulse. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Twitter Composer Modal -->
+    <div class="modal-overlay" id="tweet-modal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Draft Tweet</h3>
+                <button class="close-modal-btn" id="close-modal-btn" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="twitter-composer">
+                    <div class="composer-avatar">
+                        <div class="avatar-circle">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                    </div>
+                    <div class="composer-content">
+                        <div class="user-info">
+                            <span class="user-name">BigQuery Pulse</span>
+                            <span class="user-handle">@BigQueryPulse</span>
+                        </div>
+                        <textarea id="tweet-text" placeholder="What's happening?" maxlength="280"></textarea>
+                        
+                        <!-- Rich Card Preview inside Tweet Composer -->
+                        <div class="tweet-card-preview">
+                            <div class="preview-badge" id="preview-badge">Feature</div>
+                            <div class="preview-title">Google BigQuery Update</div>
+                            <div class="preview-snippet" id="preview-snippet">Use Gemini Cloud Assist to optimize query performance in BigQuery.</div>
+                            <div class="preview-domain">cloud.google.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="char-counter-wrapper">
+                    <span id="char-counter">0</span>/280
+                </div>
+                <div class="actions">
+                    <button class="btn btn-text" id="cancel-tweet-btn">Cancel</button>
+                    <button class="btn btn-tweet" id="publish-tweet-btn">
+                        <i class="fa-brands fa-x-twitter"></i> Post Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification for Links -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toast-message">Link copied to clipboard!</span>
+    </div>
+
+    <!-- Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
