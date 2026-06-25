@@ -86,6 +86,8 @@ python weather_agent.py "New York"
 - 🔁 Exponential backoff retry on rate limits
 - ⚠️ Graceful error handling for invalid cities and network failures
 - 🐳 Fully containerized with Docker
+- 🎯 Few-shot examples for reliable structured output
+- ⚡ Streaming for real-time conversational summaries
 
 ---
 
