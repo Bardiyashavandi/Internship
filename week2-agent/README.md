@@ -95,15 +95,26 @@ python weather_agent.py "New York"
 
 ```
 week2-agent/
-├── weather_agent.py            main agent
+├── weather_agent.py                  main agent
 ├── specs/
-│   └── weather_agent_spec.md   feature spec written before coding
+│   ├── weather_agent_spec.md         overall agent spec
+│   ├── weather_fetcher_spec.md       Open-Meteo fetcher
+│   ├── weather_parser_spec.md        Claude parser
+│   └── streaming_summary_spec.md     streaming summary
 ├── Dockerfile
 ├── pyproject.toml
 ├── poetry.lock
-└── .env                        not committed
+└── .env                              not committed           
 ```
 
 ---
+
+## Why Poetry + Docker
+
+**Poetry** manages Python dependencies in an isolated virtual environment.
+Every developer who clones this repo gets byte-for-byte identical packages via `poetry.lock`.
+
+**Docker** packages the entire environment — Python version, packages, and config —
+into a single image. Run it anywhere without any setup.
 
 *Built as part of a 6-week AI Engineering Internship — Week 2: LLMs, Prompting & Context Engineering*
