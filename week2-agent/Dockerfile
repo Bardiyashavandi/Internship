@@ -9,4 +9,4 @@ RUN poetry install --no-root --only main
 
 COPY . .
 
-CMD ["poetry", "run", "python", "agent.py"]
+CMD ["poetry", "run", "python", "agent_loop.py"]
